@@ -1,0 +1,38 @@
+# PHP
+# Test and package your PHP project.
+# Add steps that run tests, save build artifacts, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/php
+
+trigger:
+- master
+
+pool:
+  vmImage: 'Ubuntu-16.04'
+
+variables:
+  phpVersion: 7.2
+
+steps:
+- script: |
+    sudo update-alternatives --set php /usr/bin/php$(phpVersion)
+    sudo update-alternatives --set phar /usr/bin/phar$(phpVersion)
+    sudo update-alternatives --set phpdbg /usr/bin/phpdbg$(phpVersion)
+    sudo update-alternatives --set php-cgi /usr/bin/php-cgi$(phpVersion)
+    sudo update-alternatives --set phar.phar /usr/bin/phar.phar$(phpVersion)
+    php -version
+  displayName: 'Use PHP version $(phpVersion)'
+  
+- task: Docker@1
+  displayName: 'Build an image'
+  inputs:
+    containerregistrytype: 'Container Registry'
+    imageName : 'ai-div-txt-service'
+
+- task: AmazonWebServices.aws-vsts-tools.ECRPushImage.ECRPushImage@1
+  displayName: 'Pushing Image: '
+  inputs:
+    awsCredentials: 'Moridaru AWS Container Registry'
+    regionName: 'ap-southeast-1'
+    sourceImageName: 'ai-div-txt-service'
+    repositoryName: 'moridaru'
+    pushTag: 'ai-div-txt-service'

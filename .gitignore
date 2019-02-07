@@ -1,0 +1,17 @@
+.env
+.idea/
+vendor/*
+node_modules/
+
+system/data/*
+!system/data/cfg/
+!system/data/lang/
+
+!system/data/log/
+system/data/log/*
+
+!system/data/cache/
+system/data/cache/*
+
+!system/data/upload/
+system/data/upload/*
